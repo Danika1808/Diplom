@@ -13,7 +13,40 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.6" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0-preview.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\VerificationCenter\VerificationCenter.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Views\VerificationCenter\CreateSelfSignedCertificateForm.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\Document\AddDocument.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Document\Documents.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\VerificationCenter\CreateIssueCertificate.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\VerificationCenter\CreateSelfSignedCertificate.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\VerificationCenter\CreateSelfSignedCertificateForm.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Views\VerificationCenter\CreateSelfSignedCertificate.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Views\VerificationCenter\CreateIssueCertificate.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Views\Document\AddDocument.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Views\Document\Documents.cshtml" />
     </ItemGroup>
 
 </Project>

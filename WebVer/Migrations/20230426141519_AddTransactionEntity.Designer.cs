@@ -12,8 +12,8 @@ using WebVer;
 namespace WebVer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230425194228_init")]
-    partial class init
+    [Migration("20230426141519_AddTransactionEntity")]
+    partial class AddTransactionEntity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -113,6 +113,103 @@ namespace WebVer.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("WebVer.Domain.Blockchain.Transaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("DescriptionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("IssuerId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DescriptionId");
+
+                    b.HasIndex("IssuerId");
+
+                    b.ToTable("Transactions");
+                });
+
+            modelBuilder.Entity("WebVer.Domain.Blockchain.TransactionDescription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Action")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("DocumentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("SubjectId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("TransactionDescription");
+                });
+
+            modelBuilder.Entity("WebVer.Domain.Documents.AppointSingerDocument", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DocumentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SignerId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentId");
+
+                    b.HasIndex("SignerId");
+
+                    b.ToTable("AppointSingerDocuments");
+                });
+
+            modelBuilder.Entity("WebVer.Domain.Documents.Document", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Documents");
+                });
+
             modelBuilder.Entity("WebVer.Domain.Identity.Role", b =>
                 {
                     b.Property<Guid>("Id")
@@ -174,15 +271,23 @@ namespace WebVer.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Inn")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -193,6 +298,10 @@ namespace WebVer.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Patronymic")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
@@ -227,18 +336,21 @@ namespace WebVer.Migrations
                         {
                             Id = new Guid("a0347f0f-831a-4852-a2c2-ff19d4906e8d"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "51b4938d-2502-44e9-a3a2-50e3a1ae5f9f",
-                            Email = "admin@mail.RU",
+                            ConcurrencyStamp = "702a7fc1-04f8-4cf0-b512-f196a458bbf2",
+                            Email = "admin@mail.ru",
                             EmailConfirmed = true,
+                            FirstName = "Данил",
+                            Inn = "123456789",
+                            LastName = "Сабирзянов",
                             LockoutEnabled = false,
-                            Name = "Danek",
                             NormalizedEmail = "ADMIN@MAIL.RU",
-                            NormalizedUserName = "ADMIN@MAIL.RU",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBFnmbgKdBvNeacp+QJJH90+sg5l+PebAKX8h2QCAOBFOcCawuyyucCSjHUZSO/oQg==",
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJufvhK9I+W+xk5WPg7RNj8KiJc4by1PaHgy5dQbh/CPxdWe4Mtd5Sb9UOnummraIg==",
+                            Patronymic = "Азатович",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "2b97c133-8b5c-4b1b-bed4-c52a3d6414ef",
+                            SecurityStamp = "2497834b-285d-4568-921e-d2921f98574b",
                             TwoFactorEnabled = false,
-                            UserName = "admin@mail.ru"
+                            UserName = "admin"
                         });
                 });
 
@@ -262,6 +374,38 @@ namespace WebVer.Migrations
                             UserId = new Guid("a0347f0f-831a-4852-a2c2-ff19d4906e8d"),
                             RoleId = new Guid("3a63d931-d70a-4439-8e7f-486943f8bf5d")
                         });
+                });
+
+            modelBuilder.Entity("WebVer.Domain.VerificationCenter.CertificateInfo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsSelfSignedCertificate")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("NotAfter")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("NotBefore")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PublicKey")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SignatureAlgorithmName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SubjectName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CertificateInfo");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -298,6 +442,72 @@ namespace WebVer.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("WebVer.Domain.Blockchain.Transaction", b =>
+                {
+                    b.HasOne("WebVer.Domain.Blockchain.TransactionDescription", "Description")
+                        .WithMany()
+                        .HasForeignKey("DescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebVer.Domain.Identity.User", "Issuer")
+                        .WithMany()
+                        .HasForeignKey("IssuerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Description");
+
+                    b.Navigation("Issuer");
+                });
+
+            modelBuilder.Entity("WebVer.Domain.Blockchain.TransactionDescription", b =>
+                {
+                    b.HasOne("WebVer.Domain.Documents.Document", "Document")
+                        .WithMany()
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebVer.Domain.Identity.User", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId");
+
+                    b.Navigation("Document");
+
+                    b.Navigation("Subject");
+                });
+
+            modelBuilder.Entity("WebVer.Domain.Documents.AppointSingerDocument", b =>
+                {
+                    b.HasOne("WebVer.Domain.Documents.Document", "Document")
+                        .WithMany()
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebVer.Domain.Identity.User", "Signer")
+                        .WithMany()
+                        .HasForeignKey("SignerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Document");
+
+                    b.Navigation("Signer");
+                });
+
+            modelBuilder.Entity("WebVer.Domain.Documents.Document", b =>
+                {
+                    b.HasOne("WebVer.Domain.Identity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WebVer.Domain.Identity.UserRole", b =>

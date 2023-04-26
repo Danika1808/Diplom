@@ -1,0 +1,59 @@
+﻿@model WebVer.Domain.VerificationCenter.CertificateInfo
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+            <ul class="navbar-nav flex-grow-1">
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="VerificationCenter" asp-action="CreateSelfSignedCertificate">Сертификат УЦ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-controller="VerificationCenter" asp-action="CreateIssueCertificate">Сертификат пользователя</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+@if (Model == default)
+{
+    @await Html.PartialAsync("CreateSelfSignedCertificateForm")
+}
+else
+{
+    <div class="card" style="width: auto">
+        <div class="card-body">
+            <h5 class="card-title">Сертификат УЦ</h5>
+        </div>        <div class="card-body">
+            <h5 class="card-title">Публичный ключ</h5>
+            <p class="card-text">@Model.PublicKey</p>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Имя Субъекта</h5>
+            <p class="card-text">@Model.SubjectName</p>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Дата начала валидности сертификата</h5>
+            <p class="card-text">@Model.NotBefore</p>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Дата окончания валидности сертификата</h5>
+            <p class="card-text">@Model.NotAfter</p>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Алгоритм шифрования</h5>
+            <p class="card-text">@Model.SignatureAlgorithmName</p>
+        </div>
+    </div>
+}
+
+

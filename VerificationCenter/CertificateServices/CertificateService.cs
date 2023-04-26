@@ -1,5 +1,4 @@
 ﻿using Org.BouncyCastle.Asn1.X509;
-using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Operators;
 using Org.BouncyCastle.Crypto.Parameters;
@@ -106,11 +105,28 @@ namespace VerificationCenter.CertificateServices
             return serialNumber;
         }
 
-        public Pkcs10CertificationRequest GenerateCsr(GenerateCertificateRequest request,
+        public Pkcs10CertificationRequest CreateSelfSignedCertificateCsr(CreateSelfSignedCertificateCommand request,
             CryptographyAlgorithm algorithm,
             AsymmetricCipherKeyPair keyPair)
         {
-            var subject = new X509Name($"C={request.Country}, L={request.locality}, O={request.Organization}, UID={request.Inn} OU={request.OrganizationalUnit}, CN={request.CommonName}");
+            var subject = new X509Name($"O={request.OrganizationInn}, CN={request.OrganizationName}");
+
+            var algorithmName = algorithm.ToString();
+
+            var csr = keyPair.Private switch
+            {
+                RsaPrivateCrtKeyParameters => new Pkcs10CertificationRequest(algorithmName, subject, keyPair.Public, null, keyPair.Private),
+                _ => throw new Exception("Unknown key pair type")
+            };
+
+            return csr;
+        }
+
+        public Pkcs10CertificationRequest CreateIssuerCertificateCsr(CreateIssuerCertificateCommand request,
+            CryptographyAlgorithm algorithm,
+            AsymmetricCipherKeyPair keyPair)
+        {
+            var subject = new X509Name($"O={request.Inn}, CN={request.FullName}");
 
             var algorithmName = algorithm.ToString();
 
@@ -129,11 +145,33 @@ namespace VerificationCenter.CertificateServices
 
             store.Open(OpenFlags.ReadWrite);
 
-            var crt = store.Certificates.First();
-
             store.Add(certificate);
 
             store.Close();
+        }
+
+        public X509Certificate2 GetCertificateFromStorageBySubjectName(string searchString)
+        {
+            var store = new X509Store(StoreLocation.CurrentUser);
+
+            store.Open(OpenFlags.ReadOnly);
+
+            var certificate = store.Certificates.FirstOrDefault(x => x.SubjectName.Name == searchString);
+
+            store.Close();
+
+            return certificate;
+        }
+
+        public bool CertificateIsExist(string subjectName)
+        {
+            var store = new X509Store(StoreLocation.CurrentUser);
+
+            store.Open(OpenFlags.ReadOnly);
+
+            var certificate = store.Certificates.Find(X509FindType.FindBySubjectName, subjectName, false).FirstOrDefault();
+
+            return certificate != null;
         }
     }
 }

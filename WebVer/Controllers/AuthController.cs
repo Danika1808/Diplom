@@ -26,7 +26,7 @@ public class AuthController : Controller
     {
         if (ModelState.IsValid)
         {
-            var user = await _userManager.FindByEmailAsync(loginViewModel.Login);
+            var user = await _userManager.FindByNameAsync(loginViewModel.Login);
             if (user == null)
             {
                 ModelState.AddModelError("","Неправильный логин и (или) пароль");

@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using WebVer.Configurations;
+using WebVer.Domain.Blockchain;
+using WebVer.Domain.Documents;
 using WebVer.Domain.Identity;
+using WebVer.Domain.VerificationCenter;
 
 namespace WebVer;
 
@@ -16,6 +20,14 @@ public sealed class ApplicationDbContext : IdentityDbContext<User, Role, Guid, I
         if(autoMigrate)
             Database.Migrate();
     }
+
+    public DbSet<CertificateInfo> CertificateInfo { get; set; }
+    
+    public DbSet<Document> Documents { get; set; }
+
+    public DbSet<Transaction> Transactions { get; set; }
+
+    public DbSet<AppointSingerDocument> AppointSingerDocuments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

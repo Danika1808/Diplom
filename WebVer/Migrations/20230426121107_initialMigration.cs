@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace WebVer.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class initialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,7 +33,10 @@ namespace WebVer.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
+                    FirstName = table.Column<string>(type: "text", nullable: false),
+                    LastName = table.Column<string>(type: "text", nullable: false),
+                    Patronymic = table.Column<string>(type: "text", nullable: false),
+                    Inn = table.Column<string>(type: "text", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -52,6 +55,23 @@ namespace WebVer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CertificateInfo",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    SignatureAlgorithmName = table.Column<string>(type: "text", nullable: false),
+                    NotAfter = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    NotBefore = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PublicKey = table.Column<string>(type: "text", nullable: false),
+                    IsSelfSignedCertificate = table.Column<bool>(type: "boolean", nullable: false),
+                    SubjectName = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CertificateInfo", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -171,8 +191,8 @@ namespace WebVer.Migrations
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "Name", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { new Guid("a0347f0f-831a-4852-a2c2-ff19d4906e8d"), 0, "51b4938d-2502-44e9-a3a2-50e3a1ae5f9f", "admin@mail.RU", true, false, null, "Danek", "ADMIN@MAIL.RU", "ADMIN@MAIL.RU", "AQAAAAIAAYagAAAAEBFnmbgKdBvNeacp+QJJH90+sg5l+PebAKX8h2QCAOBFOcCawuyyucCSjHUZSO/oQg==", null, false, "2b97c133-8b5c-4b1b-bed4-c52a3d6414ef", false, "admin@mail.ru" });
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "Inn", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "Patronymic", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { new Guid("a0347f0f-831a-4852-a2c2-ff19d4906e8d"), 0, "98f198fa-6528-4d1f-9dc7-c02b2870ab34", "admin@mail.ru", true, "Данил", "123456789", "Сабирзянов", false, null, "ADMIN@MAIL.RU", "ADMIN", "AQAAAAIAAYagAAAAEHjYsIsF7b2W6sS/3zbP0/Zkr9cTMnBVw2IOOmj6NyDTRnUV0Gq0SvyhMCORia953w==", "Азатович", null, false, "8f28c643-586a-4dcf-8d4d-bb0f60faffbd", false, "admin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
@@ -234,6 +254,9 @@ namespace WebVer.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "CertificateInfo");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

@@ -5,9 +5,13 @@ namespace VerificationCenter.VerificationCenterServices
 {
     public interface IVerificationCenterService
     {
-        X509Certificate2 GenerateSelfSignedCertificate(GenerateCertificateRequest request);
+        X509Certificate2 GenerateSelfSignedCertificate(CreateSelfSignedCertificateCommand request);
 
-        X509Certificate2 GenerateIssueCertificate(X509Certificate2 issuerCertificate,
-            GenerateCertificateRequest request);
+        X509Certificate2 GenerateIssueCertificate(string searchString,
+            CreateIssuerCertificateCommand request);
+
+        byte[] SignPdfDocument(string password, byte[] file, string userName);
+
+        string GetSearchString(string name, string inn);
     }
 }

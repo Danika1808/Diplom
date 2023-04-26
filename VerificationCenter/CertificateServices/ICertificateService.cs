@@ -38,10 +38,18 @@ namespace VerificationCenter.CertificateServices
 
         BigInteger GenerateSerialNumber(SecureRandom random);
 
-        Pkcs10CertificationRequest GenerateCsr(GenerateCertificateRequest request,
+        Pkcs10CertificationRequest CreateSelfSignedCertificateCsr(CreateSelfSignedCertificateCommand request,
+            CryptographyAlgorithm algorithm,
+            AsymmetricCipherKeyPair keyPair);
+
+        Pkcs10CertificationRequest CreateIssuerCertificateCsr(CreateIssuerCertificateCommand request,
             CryptographyAlgorithm algorithm,
             AsymmetricCipherKeyPair keyPair);
 
         void SaveCertificateToStorage(X509Certificate2 certificate);
+
+        X509Certificate2 GetCertificateFromStorageBySubjectName(string searchString);
+
+        bool CertificateIsExist(string subjectName);
     }
 }

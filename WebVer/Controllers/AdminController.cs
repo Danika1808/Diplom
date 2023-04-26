@@ -35,7 +35,6 @@ public class AdminController : Controller
             {
                 Email = addUserViewModel.Email,
                 UserName = addUserViewModel.Email,
-                Name = addUserViewModel.Name,
                 EmailConfirmed = true,
                 LockoutEnabled = false
             };
@@ -56,4 +55,6 @@ public class AdminController : Controller
 
         return View(addUserViewModel);
     }
+
+
 }

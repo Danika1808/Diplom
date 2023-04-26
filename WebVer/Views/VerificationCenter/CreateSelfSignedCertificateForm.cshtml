@@ -1,0 +1,28 @@
+﻿@model CreateSelfSignedCertificateViewModel
+
+<div class="login-form">
+    <form asp-action="CreateSelfSignedCertificate" method="post">
+        <h1>Создать Сертификат УЦ</h1>
+        <div class="content">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="input-field">
+                <input asp-for="OrganizationName" placeholder="Имя организации" autocomplete="nope">
+            </div>
+            <div class="input-field">
+                <input asp-for="OrganizationInn" placeholder="ИНН организации" autocomplete="nope">
+            </div>
+            <div class="input-field">
+                <input asp-for="ValidityPeriod" placeholder="Дата окончания действия сертификата" autocomplete="nope">
+            </div>
+            <div class="input-field">
+                <input asp-for="Password" type="password" placeholder="Пароль" autocomplete="nope">
+            </div>
+            <div class="input-field">
+                <input asp-for="PasswordConfirm" type="password" placeholder="Подтвердить пароль" autocomplete="nope">
+            </div>
+        </div>
+        <div class="action">
+            <button type="submit">Создать</button>
+        </div>
+    </form>
+</div>

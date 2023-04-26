@@ -14,16 +14,19 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         var admin = new User
         {
             Id = Guid.Parse("a0347f0f-831a-4852-a2c2-ff19d4906e8d"),
-            UserName = "admin@mail.ru",
-            Name = "Danek",
-            NormalizedUserName = "ADMIN@MAIL.RU",
-            Email = "admin@mail.RU",
+            UserName = "admin",
+            FirstName = "Данил",
+            LastName = "Сабирзянов",
+            Patronymic = "Азатович",
+            Inn = "123456789",
+            NormalizedUserName = "ADMIN",
+            Email = "admin@mail.ru",
             NormalizedEmail = "ADMIN@MAIL.RU",
             EmailConfirmed = true,
             SecurityStamp = Guid.NewGuid().ToString(),
         };
         
-        admin.PasswordHash = hasher.HashPassword(admin, "admin123");
+        admin.PasswordHash = hasher.HashPassword(admin, "admin");
 
         builder.HasData(admin);
     }

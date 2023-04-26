@@ -1,0 +1,19 @@
+﻿@model CreateIssuerCertificateViewModel
+
+<div class="login-form">
+    <form asp-action="CreateIssueCertificate" method="post">
+        <h1>Создать Сертификат Пользователя</h1>
+        <div class="content">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="input-field">
+                <input asp-for="Password" type="password" placeholder="Пароль" autocomplete="nope">
+            </div>
+            <div class="input-field">
+                <input asp-for="PasswordConfirm" type="password" placeholder="Подтвердить пароль" autocomplete="nope">
+            </div>
+        </div>
+        <div class="action">
+            <button type="submit">Создать</button>
+        </div>
+    </form>
+</div>

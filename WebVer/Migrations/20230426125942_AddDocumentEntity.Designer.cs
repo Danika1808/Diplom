@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebVer;
@@ -11,9 +12,11 @@ using WebVer;
 namespace WebVer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230426125942_AddDocumentEntity")]
+    partial class AddDocumentEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -108,75 +111,6 @@ namespace WebVer.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("WebVer.Domain.Blockchain.Transaction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("DescriptionId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("IssuerId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DescriptionId");
-
-                    b.HasIndex("IssuerId");
-
-                    b.ToTable("Transactions");
-                });
-
-            modelBuilder.Entity("WebVer.Domain.Blockchain.TransactionDescription", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Action")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("DocumentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("SubjectId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DocumentId");
-
-                    b.HasIndex("SubjectId");
-
-                    b.ToTable("TransactionDescription");
-                });
-
-            modelBuilder.Entity("WebVer.Domain.Documents.AppointSingerDocument", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("DocumentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("SignerId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DocumentId");
-
-                    b.HasIndex("SignerId");
-
-                    b.ToTable("AppointSingerDocuments");
                 });
 
             modelBuilder.Entity("WebVer.Domain.Documents.Document", b =>
@@ -333,7 +267,7 @@ namespace WebVer.Migrations
                         {
                             Id = new Guid("a0347f0f-831a-4852-a2c2-ff19d4906e8d"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "702a7fc1-04f8-4cf0-b512-f196a458bbf2",
+                            ConcurrencyStamp = "79ae7b90-0d2e-4dff-bfef-69abe21e3373",
                             Email = "admin@mail.ru",
                             EmailConfirmed = true,
                             FirstName = "Данил",
@@ -342,10 +276,10 @@ namespace WebVer.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@MAIL.RU",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJufvhK9I+W+xk5WPg7RNj8KiJc4by1PaHgy5dQbh/CPxdWe4Mtd5Sb9UOnummraIg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAENAdmL6KTSwtXv/1aqfWBJVKq9JtMV7NdjHCvt+mB6UhM2V1bOnlO8cH3PiSxxjhVA==",
                             Patronymic = "Азатович",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "2497834b-285d-4568-921e-d2921f98574b",
+                            SecurityStamp = "248e8b3b-63ab-4743-9c70-7d79c1eccc41",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -439,61 +373,6 @@ namespace WebVer.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("WebVer.Domain.Blockchain.Transaction", b =>
-                {
-                    b.HasOne("WebVer.Domain.Blockchain.TransactionDescription", "Description")
-                        .WithMany()
-                        .HasForeignKey("DescriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebVer.Domain.Identity.User", "Issuer")
-                        .WithMany()
-                        .HasForeignKey("IssuerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Description");
-
-                    b.Navigation("Issuer");
-                });
-
-            modelBuilder.Entity("WebVer.Domain.Blockchain.TransactionDescription", b =>
-                {
-                    b.HasOne("WebVer.Domain.Documents.Document", "Document")
-                        .WithMany()
-                        .HasForeignKey("DocumentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebVer.Domain.Identity.User", "Subject")
-                        .WithMany()
-                        .HasForeignKey("SubjectId");
-
-                    b.Navigation("Document");
-
-                    b.Navigation("Subject");
-                });
-
-            modelBuilder.Entity("WebVer.Domain.Documents.AppointSingerDocument", b =>
-                {
-                    b.HasOne("WebVer.Domain.Documents.Document", "Document")
-                        .WithMany()
-                        .HasForeignKey("DocumentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebVer.Domain.Identity.User", "Signer")
-                        .WithMany()
-                        .HasForeignKey("SignerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Document");
-
-                    b.Navigation("Signer");
                 });
 
             modelBuilder.Entity("WebVer.Domain.Documents.Document", b =>
