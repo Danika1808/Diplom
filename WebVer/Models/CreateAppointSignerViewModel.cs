@@ -1,6 +1,4 @@
-﻿using Microsoft.Build.Framework;
-
-namespace WebVer.Models
+﻿namespace WebVer.Models
 {
     public class CreateAppointSignerViewModel
     {

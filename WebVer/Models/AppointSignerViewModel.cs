@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System.ComponentModel.DataAnnotations;
-using WebVer.Domain.Documents;
-using WebVer.Domain.Identity;
 
 namespace WebVer.Models
 {

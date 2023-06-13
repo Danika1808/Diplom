@@ -9,7 +9,7 @@ using WebVer.Models;
 
 namespace WebVer.Controllers
 {
-    [Authorize(Roles = "Админ")]
+    [Authorize]
     public class DocumentController : Controller
     {
         private readonly ApplicationDbContext _applicationDbContext;
@@ -25,6 +25,7 @@ namespace WebVer.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Админ")]
         [HttpPost]
         public IActionResult AddDocument(AddDocumentViewModel model)
         {
@@ -44,7 +45,7 @@ namespace WebVer.Controllers
                 Data = bytes,
                 Description = model.Description,
                 Name = model.Name,
-                UserId = user.Id
+                IssuerId = user.Id
             };
 
             _applicationDbContext.Documents.Add(document);
@@ -57,13 +58,13 @@ namespace WebVer.Controllers
         public IActionResult Documents()
         {
             var documents = _applicationDbContext.Documents
-                .Include(x => x.User)
+                .Include(x => x.Issuer)
                 .Select(x => new DocumentViewModel()
-            {
-                Id = x.Id,
-                Description = x.Description,
-                Name = x.Name,
-                Author = CreateFullName(x.User.FirstName, x.User.LastName, x.User.Patronymic)
+                {
+                    Id = x.Id,
+                    Description = x.Description,
+                    Name = x.Name,
+                    Author = CreateFullName(x.Issuer.FirstName, x.Issuer.LastName, x.Issuer.Patronymic)
                 }).ToList();
 
             return View(documents);
@@ -88,31 +89,44 @@ namespace WebVer.Controllers
         {
             var user = _applicationDbContext.Users.FirstOrDefault(x => x.UserName == User.Identity.Name);
 
-            var appointSingerDocument = new AppointSingerDocument()
-            {
-                DocumentId = model.DocumentId,
-                SignerId = model.UserId
-            };
 
-            _applicationDbContext.AppointSingerDocuments.Add(appointSingerDocument);
-
-            var transactionDescription = new TransactionDescription()
+            var eventDescription = new EventDescription()
             {
-                Action = TransactionAction.AppointSigner,
+                Action = EventAction.AppointSigner,
                 DocumentId = model.DocumentId,
                 SubjectId = model.UserId
             };
 
-            var transaction = new Transaction()
+            var @event = new Event()
             {
                 CreatedDate = DateTime.Now,
-                Description = transactionDescription,
+                Description = eventDescription,
                 IssuerId = user.Id
             };
 
-            _applicationDbContext.Transactions.Add(transaction);
+            var contract = new DocumentSignContract(user.Id);
 
-            _applicationDbContext.SaveChanges();
+            var setSignerResult = contract.SetSigner(model.UserId, @event);
+
+            if (setSignerResult)
+            {
+                var appointSingerDocument = new AppointSingerDocument()
+                {
+                    DocumentId = model.DocumentId,
+                    SignerId = model.UserId,
+                    ContractId = contract.Id,
+                };
+
+                _applicationDbContext.AppointSingerDocuments.Add(appointSingerDocument);
+
+                _applicationDbContext.Transactions.Add(@event);
+
+                _applicationDbContext.DocumentSignContracts.Add(contract);
+
+                _applicationDbContext.SaveChanges();
+
+                return Redirect(nameof(Documents));
+            }
 
             return Redirect(nameof(Documents));
         }
@@ -140,42 +154,56 @@ namespace WebVer.Controllers
 
             var document = _applicationDbContext.Documents.FirstOrDefault(x => x.Id == model.DocumentId);
 
+            var appointSignedDocument =
+                _applicationDbContext.AppointSingerDocuments.FirstOrDefault(x => x.Id == model.AppointSingerDocumentId);
+
+            var contract = _applicationDbContext.DocumentSignContracts
+                .Where(x => x.IsCompleted == false)
+                .FirstOrDefault(x => x.Id == appointSignedDocument.ContractId);
+
             var fullname = CreateFullName(user.FirstName, user.LastName, user.Patronymic);
 
             var searchString =
                 _verificationCenterService.GetSearchString(fullname, user.Inn);
 
+            var approved = contract.ApproveToSign(user.Id, document.IssuerId);
+
+            if (!approved) return Redirect(nameof(Documents));
+
             var signedDocumentResult = _verificationCenterService.SignPdfDocument(model.Password, document.Data, searchString);
 
-            var signedDocument = new Document()
+            var eventDescription = new EventDescription()
             {
-                Data = signedDocumentResult,
-                Description = $"Подписанный документ пользователем - {fullname}",
-                Name = $"signed-document-{document.Name}",
-                UserId = user.Id
-            };
-
-            _applicationDbContext.Documents.Add(signedDocument);
-
-            var transactionDescription = new TransactionDescription()
-            {
-                Action = TransactionAction.SignDocument,
+                Action = EventAction.SignDocument,
                 DocumentId = model.DocumentId,
                 SubjectId = user.Id
             };
 
-            var transaction = new Transaction()
+            var @event = new Event()
             {
                 CreatedDate = DateTime.Now,
-                Description = transactionDescription,
+                Description = eventDescription,
                 IssuerId = user.Id
             };
 
-            _applicationDbContext.Transactions.Add(transaction);
+            var signedDocument = contract.SignDocument(signedDocumentResult, document, @event);
+
+            var previousBlock = _applicationDbContext.Blocks.OrderBy(e => e.TimeStamp).Last();
+
+            var block = new Block(previousBlock.Hash, contract.Id);
+
+            _applicationDbContext.DocumentSignContracts.Update(contract);
+
+            _applicationDbContext.Blocks.Add(block);
+
+            _applicationDbContext.Documents.Add(signedDocument);
+
+            _applicationDbContext.Transactions.Add(@event);
 
             _applicationDbContext.SaveChanges();
 
             return Redirect(nameof(Documents));
+
         }
 
         private static string CreateFullName(string firstName, string lastName, string patronymic)

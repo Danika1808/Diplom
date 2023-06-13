@@ -12,8 +12,8 @@ using WebVer;
 namespace WebVer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230426141519_AddTransactionEntity")]
-    partial class AddTransactionEntity
+    [Migration("20230612154232_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -113,19 +113,63 @@ namespace WebVer.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("WebVer.Domain.Blockchain.Transaction", b =>
+            modelBuilder.Entity("WebVer.Domain.Blockchain.Block", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Nonce")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PreviousHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("SmartContractId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SmartContractId");
+
+                    b.ToTable("Blocks");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("8fe067ac-71e5-4449-b19f-b0b42c78fb76"),
+                            Hash = "00007aec66fd94ada25969ceca4c0475c73e4afff30e651089f694253803b07e",
+                            Nonce = 55333,
+                            PreviousHash = "",
+                            SmartContractId = new Guid("94976d58-5245-4834-9863-30ab8c363679"),
+                            TimeStamp = new DateTime(2023, 6, 12, 18, 42, 32, 241, DateTimeKind.Local).AddTicks(827)
+                        });
+                });
+
+            modelBuilder.Entity("WebVer.Domain.Blockchain.Event", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<Guid>("DescriptionId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("IssuerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("SmartContractId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -134,10 +178,12 @@ namespace WebVer.Migrations
 
                     b.HasIndex("IssuerId");
 
+                    b.HasIndex("SmartContractId");
+
                     b.ToTable("Transactions");
                 });
 
-            modelBuilder.Entity("WebVer.Domain.Blockchain.TransactionDescription", b =>
+            modelBuilder.Entity("WebVer.Domain.Blockchain.EventDescription", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -158,13 +204,42 @@ namespace WebVer.Migrations
 
                     b.HasIndex("SubjectId");
 
-                    b.ToTable("TransactionDescription");
+                    b.ToTable("EventDescription");
+                });
+
+            modelBuilder.Entity("WebVer.Domain.Blockchain.SmartContract", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("character varying(21)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SmartContract");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("SmartContract");
+
+                    b.UseTphMappingStrategy();
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("94976d58-5245-4834-9863-30ab8c363679")
+                        });
                 });
 
             modelBuilder.Entity("WebVer.Domain.Documents.AppointSingerDocument", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ContractId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("DocumentId")
@@ -174,6 +249,8 @@ namespace WebVer.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ContractId");
 
                     b.HasIndex("DocumentId");
 
@@ -196,16 +273,24 @@ namespace WebVer.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsSigned")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("IssuerId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("SignerId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("IssuerId");
+
+                    b.HasIndex("SignerId");
 
                     b.ToTable("Documents");
                 });
@@ -336,7 +421,7 @@ namespace WebVer.Migrations
                         {
                             Id = new Guid("a0347f0f-831a-4852-a2c2-ff19d4906e8d"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "702a7fc1-04f8-4cf0-b512-f196a458bbf2",
+                            ConcurrencyStamp = "3db4547d-a7d3-4f93-89d9-5667dcf3efb0",
                             Email = "admin@mail.ru",
                             EmailConfirmed = true,
                             FirstName = "Данил",
@@ -345,10 +430,10 @@ namespace WebVer.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@MAIL.RU",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJufvhK9I+W+xk5WPg7RNj8KiJc4by1PaHgy5dQbh/CPxdWe4Mtd5Sb9UOnummraIg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGOLWb0yitIcryfAzAHrfW96QWo/lmrcZqjQXGgPAwkeaGM4yWe/sB7RMaDjKZaDug==",
                             Patronymic = "Азатович",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "2497834b-285d-4568-921e-d2921f98574b",
+                            SecurityStamp = "0786f75c-6b4a-43c6-bb96-a128c8d5210f",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -386,10 +471,10 @@ namespace WebVer.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("NotAfter")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("NotBefore")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("PublicKey")
                         .IsRequired()
@@ -406,6 +491,26 @@ namespace WebVer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CertificateInfo");
+                });
+
+            modelBuilder.Entity("WebVer.Domain.Blockchain.DocumentSignContract", b =>
+                {
+                    b.HasBaseType("WebVer.Domain.Blockchain.SmartContract");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("IssuerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SignerId")
+                        .HasColumnType("uuid");
+
+                    b.HasIndex("IssuerId");
+
+                    b.HasIndex("SignerId");
+
+                    b.HasDiscriminator().HasValue("DocumentSignContract");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -444,9 +549,20 @@ namespace WebVer.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WebVer.Domain.Blockchain.Transaction", b =>
+            modelBuilder.Entity("WebVer.Domain.Blockchain.Block", b =>
                 {
-                    b.HasOne("WebVer.Domain.Blockchain.TransactionDescription", "Description")
+                    b.HasOne("WebVer.Domain.Blockchain.SmartContract", "SmartContract")
+                        .WithMany()
+                        .HasForeignKey("SmartContractId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SmartContract");
+                });
+
+            modelBuilder.Entity("WebVer.Domain.Blockchain.Event", b =>
+                {
+                    b.HasOne("WebVer.Domain.Blockchain.EventDescription", "Description")
                         .WithMany()
                         .HasForeignKey("DescriptionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -458,12 +574,16 @@ namespace WebVer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("WebVer.Domain.Blockchain.SmartContract", null)
+                        .WithMany("Events")
+                        .HasForeignKey("SmartContractId");
+
                     b.Navigation("Description");
 
                     b.Navigation("Issuer");
                 });
 
-            modelBuilder.Entity("WebVer.Domain.Blockchain.TransactionDescription", b =>
+            modelBuilder.Entity("WebVer.Domain.Blockchain.EventDescription", b =>
                 {
                     b.HasOne("WebVer.Domain.Documents.Document", "Document")
                         .WithMany()
@@ -482,9 +602,36 @@ namespace WebVer.Migrations
 
             modelBuilder.Entity("WebVer.Domain.Documents.AppointSingerDocument", b =>
                 {
+                    b.HasOne("WebVer.Domain.Blockchain.DocumentSignContract", "Contract")
+                        .WithMany()
+                        .HasForeignKey("ContractId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("WebVer.Domain.Documents.Document", "Document")
                         .WithMany()
                         .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebVer.Domain.Identity.User", "Signer")
+                        .WithMany("AppointDocuments")
+                        .HasForeignKey("SignerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Contract");
+
+                    b.Navigation("Document");
+
+                    b.Navigation("Signer");
+                });
+
+            modelBuilder.Entity("WebVer.Domain.Documents.Document", b =>
+                {
+                    b.HasOne("WebVer.Domain.Identity.User", "Issuer")
+                        .WithMany()
+                        .HasForeignKey("IssuerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -494,20 +641,9 @@ namespace WebVer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Document");
+                    b.Navigation("Issuer");
 
                     b.Navigation("Signer");
-                });
-
-            modelBuilder.Entity("WebVer.Domain.Documents.Document", b =>
-                {
-                    b.HasOne("WebVer.Domain.Identity.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WebVer.Domain.Identity.UserRole", b =>
@@ -529,6 +665,30 @@ namespace WebVer.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("WebVer.Domain.Blockchain.DocumentSignContract", b =>
+                {
+                    b.HasOne("WebVer.Domain.Identity.User", "Issuer")
+                        .WithMany()
+                        .HasForeignKey("IssuerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebVer.Domain.Identity.User", "Signer")
+                        .WithMany()
+                        .HasForeignKey("SignerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Issuer");
+
+                    b.Navigation("Signer");
+                });
+
+            modelBuilder.Entity("WebVer.Domain.Blockchain.SmartContract", b =>
+                {
+                    b.Navigation("Events");
+                });
+
             modelBuilder.Entity("WebVer.Domain.Identity.Role", b =>
                 {
                     b.Navigation("UserRoles");
@@ -536,6 +696,8 @@ namespace WebVer.Migrations
 
             modelBuilder.Entity("WebVer.Domain.Identity.User", b =>
                 {
+                    b.Navigation("AppointDocuments");
+
                     b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618

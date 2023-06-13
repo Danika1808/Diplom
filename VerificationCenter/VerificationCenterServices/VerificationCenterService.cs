@@ -1,20 +1,11 @@
-﻿using Org.BouncyCastle.Asn1.X509;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Generators;
-using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Crypto.Prng;
+﻿using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Utilities;
 using System.Security.Cryptography.X509Certificates;
 using iText.Kernel.Pdf;
 using iText.Signatures;
-using Microsoft.AspNetCore.Http;
 using Org.BouncyCastle.Math;
 using VerificationCenter.Model;
-using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.X509;
-using Org.BouncyCastle.Crypto.Operators;
 using X509Certificate = Org.BouncyCastle.X509.X509Certificate;
 using VerificationCenter.CertificateServices;
 
@@ -94,14 +85,14 @@ namespace VerificationCenter.VerificationCenterServices
 
         public byte[] SignPdfDocument(string password, byte[] file, string userName)
         {
-            X509Certificate2 issuerCert = _certificateService.GetCertificateFromStorageBySubjectName(userName);
+            var issuerCert = _certificateService.GetCertificateFromStorageBySubjectName(userName);
 
-            byte[] rawdata = issuerCert.Export(X509ContentType.Pfx, password);
+            var rawdata = issuerCert.Export(X509ContentType.Pfx, password);
             var memStream = new MemoryStream(rawdata);
             var pk12 = new Pkcs12Store(memStream, password.ToCharArray());
 
             string alias = null;
-            foreach (object a in pk12.Aliases)
+            foreach (var a in pk12.Aliases)
             {
                 alias = ((string)a);
                 if (pk12.IsKeyEntry(alias))
@@ -111,9 +102,9 @@ namespace VerificationCenter.VerificationCenterServices
             }
             ICipherParameters pk = pk12.GetKey(alias).Key;
 
-            X509CertificateEntry[] ce = pk12.GetCertificateChain(alias);
-            X509Certificate[] chain = new X509Certificate[ce.Length];
-            for (int k = 0; k < ce.Length; ++k)
+            var ce = pk12.GetCertificateChain(alias);
+            var chain = new X509Certificate[ce.Length];
+            for (var k = 0; k < ce.Length; ++k)
             {
                 chain[k] = ce[k].Certificate;
 

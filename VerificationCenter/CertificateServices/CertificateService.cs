@@ -63,7 +63,7 @@ namespace VerificationCenter.CertificateServices
         {
             var store = new Pkcs12StoreBuilder().Build();
 
-            string friendlyName = certificate.SubjectDN.ToString();
+            var friendlyName = certificate.SubjectDN.ToString();
 
             var certificateEntry = new X509CertificateEntry(certificate);
             store.SetCertificateEntry(friendlyName, certificateEntry);

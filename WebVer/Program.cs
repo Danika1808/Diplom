@@ -17,8 +17,6 @@ builder.Services.AddScoped<ICertificateService, CertificateService>();
 builder.Services.AddScoped<IVerificationCenterService, VerificationCenterService>();
 var app = builder.Build();
 
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

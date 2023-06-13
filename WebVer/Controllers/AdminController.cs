@@ -16,10 +16,6 @@ public class AdminController : Controller
         _userManager = userManager;
     }
     
-    public IActionResult Dashbord()
-    {
-        return View();
-    }
 
     public IActionResult AddUser()
     {
@@ -44,7 +40,7 @@ public class AdminController : Controller
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(user, "Пользователь");
-                return RedirectToAction("Dashbord");
+                return RedirectToAction("AddUser");
             }
 
             foreach (var error in result.Errors)

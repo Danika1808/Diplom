@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 using WebVer.Configurations;
 using WebVer.Domain.Blockchain;
 using WebVer.Domain.Documents;
@@ -16,27 +15,36 @@ public sealed class ApplicationDbContext : IdentityDbContext<User, Role, Guid, I
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration)
         : base(options)
     {
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
+        
         var autoMigrate = configuration.GetValue<bool>("AutoMigrate");
-        if(autoMigrate)
+        if (autoMigrate)
             Database.Migrate();
     }
 
     public DbSet<CertificateInfo> CertificateInfo { get; set; }
-    
+
     public DbSet<Document> Documents { get; set; }
 
-    public DbSet<Transaction> Transactions { get; set; }
+    public DbSet<Event> Transactions { get; set; }
 
     public DbSet<AppointSingerDocument> AppointSingerDocuments { get; set; }
+
+    public DbSet<DocumentSignContract> DocumentSignContracts { get; set; }
+
+    public DbSet<Block> Blocks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
+
+        modelBuilder.ApplyConfiguration(new SmartContractConfiguration());
+        modelBuilder.ApplyConfiguration(new BlockConfiguration());
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
         modelBuilder.ApplyConfiguration(new RoleConfiguration());
-        
+
         modelBuilder.Entity<UserRole>(userRole =>
         {
             userRole.HasKey(ur => new { ur.UserId, ur.RoleId });

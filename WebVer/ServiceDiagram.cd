@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="WebVer.Controllers.AdminController">
+    <Position X="0.5" Y="0.5" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\AdminController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebVer.Controllers.AuthController">
+    <Position X="5.5" Y="0.5" Width="5.75" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAABAAAIAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>Controllers\AuthController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebVer.Controllers.DocumentController">
+    <Position X="0.5" Y="13.75" Width="7.25" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAEAAAAAAAACAAAAAAAAAAACgAEAIAAABAA=</HashCode>
+      <FileName>Controllers\DocumentController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_applicationDbContext" />
+      <Field Name="_verificationCenterService" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WebVer.ApplicationDbContext">
+    <Position X="0.5" Y="9.75" Width="8" />
+    <TypeIdentifier>
+      <HashCode>AACEAAACAAAAAAAAAAAAAAABFAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>ApplicationDbContext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebVer.Controllers.HomeController">
+    <Position X="11.5" Y="0.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAIAAAAQAAAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\HomeController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebVer.Controllers.VerificationCenterController">
+    <Position X="11.5" Y="9.75" Width="7.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAMAAAAEAAACACAAAAAAAAIAgAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\VerificationCenterController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_verificationCenterService" />
+      <Field Name="_applicationDbContext" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="VerificationCenter.CertificateServices.CertificateService">
+    <Position X="0.5" Y="3.25" Width="17.5" />
+    <TypeIdentifier />
+    <Lollipop Position="13.163" />
+  </Class>
+  <Interface Name="VerificationCenter.VerificationCenterServices.IVerificationCenterService">
+    <Position X="15.25" Y="0.5" Width="6.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="VerificationCenter.CertificateServices.ICertificateService">
+    <Position X="0.5" Y="6.5" Width="17.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
