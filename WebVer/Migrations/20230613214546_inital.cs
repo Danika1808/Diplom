@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace WebVer.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class inital : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -214,10 +214,10 @@ namespace WebVer.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsCompleted = table.Column<bool>(type: "boolean", nullable: false),
                     Discriminator = table.Column<string>(type: "character varying(21)", maxLength: 21, nullable: false),
                     IssuerId = table.Column<Guid>(type: "uuid", nullable: true),
-                    SignerId = table.Column<Guid>(type: "uuid", nullable: true),
-                    IsCompleted = table.Column<bool>(type: "boolean", nullable: true)
+                    SignerId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -301,8 +301,7 @@ namespace WebVer.Migrations
                     TimeStamp = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     PreviousHash = table.Column<string>(type: "text", nullable: false),
                     SmartContractId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Hash = table.Column<string>(type: "text", nullable: false),
-                    Nonce = table.Column<int>(type: "integer", nullable: false)
+                    Hash = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -359,12 +358,12 @@ namespace WebVer.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "Inn", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "Patronymic", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { new Guid("a0347f0f-831a-4852-a2c2-ff19d4906e8d"), 0, "3db4547d-a7d3-4f93-89d9-5667dcf3efb0", "admin@mail.ru", true, "Данил", "123456789", "Сабирзянов", false, null, "ADMIN@MAIL.RU", "ADMIN", "AQAAAAIAAYagAAAAEGOLWb0yitIcryfAzAHrfW96QWo/lmrcZqjQXGgPAwkeaGM4yWe/sB7RMaDjKZaDug==", "Азатович", null, false, "0786f75c-6b4a-43c6-bb96-a128c8d5210f", false, "admin" });
+                values: new object[] { new Guid("a0347f0f-831a-4852-a2c2-ff19d4906e8d"), 0, "f6faa351-6916-4796-bb4a-0289c46645a2", "admin@mail.ru", true, "Данил", "123456789", "Сабирзянов", false, null, "ADMIN@MAIL.RU", "ADMIN", "AQAAAAIAAYagAAAAECfSbC3T3E52VbJ10s6YFPuLKeuUZaczjflJhJLmKSMzKIlnbOodM1OdlvQJmFG0Sw==", "Азатович", null, false, "1e8ef77f-c62a-461c-8304-05b506e73326", false, "admin" });
 
             migrationBuilder.InsertData(
                 table: "SmartContract",
-                columns: new[] { "Id", "Discriminator" },
-                values: new object[] { new Guid("94976d58-5245-4834-9863-30ab8c363679"), "SmartContract" });
+                columns: new[] { "Id", "Discriminator", "IsCompleted" },
+                values: new object[] { new Guid("94976d58-5245-4834-9863-30ab8c363679"), "SmartContract", false });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
@@ -373,8 +372,8 @@ namespace WebVer.Migrations
 
             migrationBuilder.InsertData(
                 table: "Blocks",
-                columns: new[] { "Id", "Hash", "Nonce", "PreviousHash", "SmartContractId", "TimeStamp" },
-                values: new object[] { new Guid("8fe067ac-71e5-4449-b19f-b0b42c78fb76"), "00007aec66fd94ada25969ceca4c0475c73e4afff30e651089f694253803b07e", 55333, "", new Guid("94976d58-5245-4834-9863-30ab8c363679"), new DateTime(2023, 6, 12, 18, 42, 32, 241, DateTimeKind.Local).AddTicks(827) });
+                columns: new[] { "Id", "Hash", "PreviousHash", "SmartContractId", "TimeStamp" },
+                values: new object[] { new Guid("1bee7002-a5cb-47a4-a32f-612143540282"), "b21f3e0987e3b3052ae76a283ff631642a6a78b41bc64a0c3033ff01d62ec034", "", new Guid("94976d58-5245-4834-9863-30ab8c363679"), new DateTime(2023, 6, 14, 0, 45, 46, 390, DateTimeKind.Local).AddTicks(2192) });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppointSingerDocuments_ContractId",

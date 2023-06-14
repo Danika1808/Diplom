@@ -12,8 +12,8 @@ using WebVer;
 namespace WebVer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230612154232_initial")]
-    partial class initial
+    [Migration("20230613214546_inital")]
+    partial class inital
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -123,9 +123,6 @@ namespace WebVer.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Nonce")
-                        .HasColumnType("integer");
-
                     b.Property<string>("PreviousHash")
                         .IsRequired()
                         .HasColumnType("text");
@@ -145,12 +142,11 @@ namespace WebVer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("8fe067ac-71e5-4449-b19f-b0b42c78fb76"),
-                            Hash = "00007aec66fd94ada25969ceca4c0475c73e4afff30e651089f694253803b07e",
-                            Nonce = 55333,
+                            Id = new Guid("1bee7002-a5cb-47a4-a32f-612143540282"),
+                            Hash = "b21f3e0987e3b3052ae76a283ff631642a6a78b41bc64a0c3033ff01d62ec034",
                             PreviousHash = "",
                             SmartContractId = new Guid("94976d58-5245-4834-9863-30ab8c363679"),
-                            TimeStamp = new DateTime(2023, 6, 12, 18, 42, 32, 241, DateTimeKind.Local).AddTicks(827)
+                            TimeStamp = new DateTime(2023, 6, 14, 0, 45, 46, 390, DateTimeKind.Local).AddTicks(2192)
                         });
                 });
 
@@ -218,6 +214,9 @@ namespace WebVer.Migrations
                         .HasMaxLength(21)
                         .HasColumnType("character varying(21)");
 
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("boolean");
+
                     b.HasKey("Id");
 
                     b.ToTable("SmartContract");
@@ -229,7 +228,8 @@ namespace WebVer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("94976d58-5245-4834-9863-30ab8c363679")
+                            Id = new Guid("94976d58-5245-4834-9863-30ab8c363679"),
+                            IsCompleted = false
                         });
                 });
 
@@ -421,7 +421,7 @@ namespace WebVer.Migrations
                         {
                             Id = new Guid("a0347f0f-831a-4852-a2c2-ff19d4906e8d"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "3db4547d-a7d3-4f93-89d9-5667dcf3efb0",
+                            ConcurrencyStamp = "f6faa351-6916-4796-bb4a-0289c46645a2",
                             Email = "admin@mail.ru",
                             EmailConfirmed = true,
                             FirstName = "Данил",
@@ -430,10 +430,10 @@ namespace WebVer.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@MAIL.RU",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGOLWb0yitIcryfAzAHrfW96QWo/lmrcZqjQXGgPAwkeaGM4yWe/sB7RMaDjKZaDug==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECfSbC3T3E52VbJ10s6YFPuLKeuUZaczjflJhJLmKSMzKIlnbOodM1OdlvQJmFG0Sw==",
                             Patronymic = "Азатович",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "0786f75c-6b4a-43c6-bb96-a128c8d5210f",
+                            SecurityStamp = "1e8ef77f-c62a-461c-8304-05b506e73326",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -496,9 +496,6 @@ namespace WebVer.Migrations
             modelBuilder.Entity("WebVer.Domain.Blockchain.DocumentSignContract", b =>
                 {
                     b.HasBaseType("WebVer.Domain.Blockchain.SmartContract");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("boolean");
 
                     b.Property<Guid>("IssuerId")
                         .HasColumnType("uuid");

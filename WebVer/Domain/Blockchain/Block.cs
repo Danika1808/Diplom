@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using Org.BouncyCastle.Crypto.Digests;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace WebVer.Domain.Blockchain
@@ -11,8 +12,6 @@ namespace WebVer.Domain.Blockchain
         public Guid SmartContractId { get; set; }
         public SmartContract SmartContract { get; set; }
         public string Hash { get; set; }
-        public int Nonce { get; set; }
-
         private Block(){}
 
         public Block(string previousHash, Guid smartContractId)
@@ -22,26 +21,20 @@ namespace WebVer.Domain.Blockchain
             PreviousHash = previousHash;
             Hash = CalculateHash();
             SmartContractId = smartContractId;
-            MineBlock(4);
         }
 
         private string CalculateHash()
         {
-            using var sha256 = SHA256.Create();
-            var rawData = Id + TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fff") + PreviousHash + SmartContract?.Id + Nonce;
+            var rawData = Id + TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fff") + PreviousHash + SmartContract?.Id;
+            
             var bytes = Encoding.UTF8.GetBytes(rawData);
-            var hashBytes = sha256.ComputeHash(bytes);
-            return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-        }
 
-        public void MineBlock(int difficulty)
-        {
-            var target = new string('0', difficulty);
-            while (Hash[..difficulty] != target)
-            {
-                Nonce++;
-                Hash = CalculateHash();
-            }
+            Gost3411Digest gost3411 = new Gost3411Digest();
+            gost3411.BlockUpdate(bytes, 0, bytes.Length);
+            byte[] hashBytes = new byte[gost3411.GetDigestSize()];
+            gost3411.DoFinal(hashBytes, 0);
+
+            return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
         }
     }
 }

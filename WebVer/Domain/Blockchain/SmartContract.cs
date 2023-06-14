@@ -4,6 +4,8 @@
     {
         public Guid Id { get; set; }
 
-        public List<Event>? Events { get; private set; } = null;
+        public List<Event>? Events { get; internal set; } = null;
+
+        public bool IsCompleted { get; internal set; }
     }
 }

@@ -13,8 +13,6 @@ namespace WebVer.Domain.Blockchain
 
         public User Signer { get; private set; }
 
-        public bool IsCompleted { get; private set; }
-
         public DocumentSignContract(Guid issuerId)
         {
             IssuerId = issuerId;
